@@ -1,0 +1,10 @@
+http:
+  port: "8090"
+  read_timeout: 10s
+  write_timeout: 10s
+  shutdown_timeout: 10s
+
+kafka:
+  topic: events.task
+  brokers:
+    - kafka:9092

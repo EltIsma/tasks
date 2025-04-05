@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP TABLE IF NOT EXISTS assignment;
+DROP TABLE IF NOT EXISTS task;
+
+END;

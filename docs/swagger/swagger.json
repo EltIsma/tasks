@@ -1,0 +1,768 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Tasks API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/v1/task": {
+            "post": {
+                "description": "Создает шаблон/задачу(без назначения на классы и уроки), но этот шаблон может использоваться для создания назначения",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Создание шаблона задачи(без назначения на классы и уроки)",
+                "parameters": [
+                    {
+                        "description": "Данные задачи",
+                        "name": "tasks",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/response.TaskID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/all": {
+            "get": {
+                "description": "Получить все шаблоны задач",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Поучить все шаблоны задач",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Task"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/assignment": {
+            "post": {
+                "description": "Назначить задачу классу и уроку",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Назначить задачу классу и уроку",
+                "parameters": [
+                    {
+                        "description": "Данные для назначения",
+                        "name": "task-assign",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TaskAsignments"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TaskAssignments"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/assignment-delete": {
+            "delete": {
+                "description": "Удалить задачу с класса и урока",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Удалить задачу с класса и урока",
+                "parameters": [
+                    {
+                        "description": "id задачи для удаления",
+                        "name": "task-assign",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TaskAsignmentID"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/assignment-update": {
+            "put": {
+                "description": "Обновить задачу для класса",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Обновить задачу для класса",
+                "parameters": [
+                    {
+                        "description": "Данные для назначения",
+                        "name": "task-assign",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TaskAsignment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/create-with-assignment": {
+            "post": {
+                "description": "Создать задачу для класса",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Создать задачу для класса",
+                "parameters": [
+                    {
+                        "description": "Данные для создания задачи с назначением классу и уроку",
+                        "name": "task-assign",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TaskWithAsignment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.AssignmentID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/get-by-class": {
+            "get": {
+                "description": "Поучить задачи класса",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Поучить задачи класса",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "название класса",
+                        "name": "class",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.ClassTasks"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/result": {
+            "post": {
+                "description": "Поставить результаты за задачу ученикам",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Поставить результаты за задачу ученикам",
+                "parameters": [
+                    {
+                        "description": "Оценки пользователей за задачу",
+                        "name": "task-results",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.TaskResult"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/{id}": {
+            "get": {
+                "description": "Получить задачу",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Поучить задачу",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Task"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/{id}/delete": {
+            "delete": {
+                "description": "Удалить шаблон задачи(удалятся все назначения, которые были созданы по задаче)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Удалить шаблон задачи",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TaskID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/task/{id}/update": {
+            "put": {
+                "description": "Обновить шаблон задачи",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Обновить шаблон задачи",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Данные задачи",
+                        "name": "tasks",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.Task"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.TaskID"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/common.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "common.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "error meessage"
+                },
+                "error_code": {
+                    "type": "integer",
+                    "example": 0
+                }
+            }
+        },
+        "request.ClassLesson": {
+            "type": "object",
+            "required": [
+                "class",
+                "lesson_id"
+            ],
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "lesson_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Task": {
+            "type": "object",
+            "required": [
+                "payload"
+            ],
+            "properties": {
+                "deadline": {
+                    "type": "string",
+                    "example": "2025-01-01T13:00:00Z"
+                },
+                "payload": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.TaskAsignment": {
+            "type": "object",
+            "required": [
+                "class",
+                "class_task_id",
+                "payload"
+            ],
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "class_task_id": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.TaskAsignmentID": {
+            "type": "object",
+            "required": [
+                "class_task_id"
+            ],
+            "properties": {
+                "class_task_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.TaskAsignments": {
+            "type": "object",
+            "required": [
+                "assign_to",
+                "template_task_id"
+            ],
+            "properties": {
+                "assign_to": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/request.ClassLesson"
+                    }
+                },
+                "template_task_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.TaskResult": {
+            "type": "object",
+            "required": [
+                "lesson_id",
+                "task_id",
+                "users_result"
+            ],
+            "properties": {
+                "lesson_id": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "users_result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/request.UserResult"
+                    }
+                }
+            }
+        },
+        "request.TaskWithAsignment": {
+            "type": "object",
+            "required": [
+                "class",
+                "lesson_id",
+                "payload"
+            ],
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "deadline": {
+                    "type": "string",
+                    "example": "2025-01-01T13:00:00Z"
+                },
+                "lesson_id": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UserResult": {
+            "type": "object",
+            "required": [
+                "mark",
+                "user_id"
+            ],
+            "properties": {
+                "mark": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.AssignmentID": {
+            "type": "object",
+            "properties": {
+                "class_task_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Assignments": {
+            "type": "object",
+            "required": [
+                "class",
+                "class_task_id",
+                "lesson_id"
+            ],
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "class_task_id": {
+                    "type": "string"
+                },
+                "lesson_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.ClassTasks": {
+            "type": "object",
+            "properties": {
+                "class": {
+                    "type": "string"
+                },
+                "tasks": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.LessonTask"
+                    }
+                }
+            }
+        },
+        "response.LessonTask": {
+            "type": "object",
+            "required": [
+                "payload"
+            ],
+            "properties": {
+                "deadline": {
+                    "type": "string",
+                    "example": "2025-01-01T13:00:00Z"
+                },
+                "lesson_id": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                },
+                "task_id": {
+                    "type": "string"
+                },
+                "task_template_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.Task": {
+            "type": "object",
+            "required": [
+                "payload"
+            ],
+            "properties": {
+                "deadline": {
+                    "type": "string",
+                    "example": "2025-01-01T13:00:00Z"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "payload": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.TaskAssignments": {
+            "type": "object",
+            "required": [
+                "assignments",
+                "task_template_id"
+            ],
+            "properties": {
+                "assignments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/response.Assignments"
+                    }
+                },
+                "task_template_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "response.TaskID": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

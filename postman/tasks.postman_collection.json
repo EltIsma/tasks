@@ -1,0 +1,230 @@
+{
+	"info": {
+		"_postman_id": "03b51d25-1528-423c-9f1c-0c221869fee0",
+		"name": "tasks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25925563"
+	},
+	"item": [
+		{
+			"name": "create task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"payload\":\"Рddfsfdsdfsscd\",\n    \"deadline\": \"2025-01-01T13:00:00Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8050/api/v1/task",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get task",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8050/api/v1/task/e49251b3-9c94-43b3-a70b-6b251a7b6967",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"e49251b3-9c94-43b3-a70b-6b251a7b6967"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update task",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"payload\":\"updated\",\n    \"deadline\": \"2030-01-01T13:00:00Z\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8050/api/v1/task/f0247aba-5367-4c0b-9388-e812c4241be1/update",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"f0247aba-5367-4c0b-9388-e812c4241be1",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete task",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8050/api/v1/task/f0247aba-5227-4c0b-9388-e812c4241be0/delete",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"f0247aba-5227-4c0b-9388-e812c4241be0",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create assignment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"users\": [\"d47c1ee0-fe60-4635-9a8b-97c65c09d4ec\", \"488d818d-ecd2-4e98-859d-f64ad4f570c7\", \"221d818d-ecd2-4e98-859d-f64ad4f570c7\"],\n    \"task_id\": \"91ed52bf-419e-4314-8449-84baa6f68335\",\n    \"lesson_id\": \"49d5abb0-ead3-4371-a892-b488a52affab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8050/api/v1/task/assignment",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"assignment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get task by user id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8050/api/v1/task/get-by-user?user_id=\"5ee51494-177e-4562-a734-8e78a6b9e60c\"",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"get-by-user"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "\"5ee51494-177e-4562-a734-8e78a6b9e60c\""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set results",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"task_id\": \"e49251b3-9c94-43b3-a70b-6b251a7b6956\",\n    \"users_result\": [\n        {\n        \"user_id\" : \"1b70e1af-e06c-48f3-9d5a-cf406e747b49\",\n        \"mark\" : 5\n        },\n         {\n        \"user_id\" : \"5ee51494-177e-4562-a734-8e78a6b9e63c\",\n        \"mark\" : 2\n        },\n         {\n        \"user_id\" : \"a73ed341-5d81-4585-a467-38ccd8636264\",\n        \"mark\" : 8\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8050/api/v1/task/result",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"result"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete assignment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"user_id\": \"d47c1ee0-fe60-4635-9a8b-97c65c09d4ec\",\n    \"task_id\": \"91ed52bf-419e-4314-8449-84baa6f68335\",\n    \"lesson_id\": \"49d5abb0-ead3-4371-a892-b488a52affab\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8050/api/v1/task/assignment-delete",
+					"host": [
+						"localhost"
+					],
+					"port": "8050",
+					"path": [
+						"api",
+						"v1",
+						"task",
+						"assignment-delete"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

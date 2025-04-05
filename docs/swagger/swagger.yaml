@@ -1,0 +1,508 @@
+definitions:
+  common.ErrorResponse:
+    properties:
+      error:
+        example: error meessage
+        type: string
+      error_code:
+        example: 0
+        type: integer
+    type: object
+  request.ClassLesson:
+    properties:
+      class:
+        type: string
+      lesson_id:
+        type: string
+    required:
+    - class
+    - lesson_id
+    type: object
+  request.Task:
+    properties:
+      deadline:
+        example: "2025-01-01T13:00:00Z"
+        type: string
+      payload:
+        type: string
+    required:
+    - payload
+    type: object
+  request.TaskAsignment:
+    properties:
+      class:
+        type: string
+      class_task_id:
+        type: string
+      payload:
+        type: string
+    required:
+    - class
+    - class_task_id
+    - payload
+    type: object
+  request.TaskAsignmentID:
+    properties:
+      class_task_id:
+        type: string
+    required:
+    - class_task_id
+    type: object
+  request.TaskAsignments:
+    properties:
+      assign_to:
+        items:
+          $ref: '#/definitions/request.ClassLesson'
+        type: array
+      template_task_id:
+        type: string
+    required:
+    - assign_to
+    - template_task_id
+    type: object
+  request.TaskResult:
+    properties:
+      lesson_id:
+        type: string
+      task_id:
+        type: string
+      users_result:
+        items:
+          $ref: '#/definitions/request.UserResult'
+        type: array
+    required:
+    - lesson_id
+    - task_id
+    - users_result
+    type: object
+  request.TaskWithAsignment:
+    properties:
+      class:
+        type: string
+      deadline:
+        example: "2025-01-01T13:00:00Z"
+        type: string
+      lesson_id:
+        type: string
+      payload:
+        type: string
+    required:
+    - class
+    - lesson_id
+    - payload
+    type: object
+  request.UserResult:
+    properties:
+      mark:
+        type: integer
+      user_id:
+        type: string
+    required:
+    - mark
+    - user_id
+    type: object
+  response.AssignmentID:
+    properties:
+      class_task_id:
+        type: string
+    type: object
+  response.Assignments:
+    properties:
+      class:
+        type: string
+      class_task_id:
+        type: string
+      lesson_id:
+        type: string
+    required:
+    - class
+    - class_task_id
+    - lesson_id
+    type: object
+  response.ClassTasks:
+    properties:
+      class:
+        type: string
+      tasks:
+        items:
+          $ref: '#/definitions/response.LessonTask'
+        type: array
+    type: object
+  response.LessonTask:
+    properties:
+      deadline:
+        example: "2025-01-01T13:00:00Z"
+        type: string
+      lesson_id:
+        type: string
+      payload:
+        type: string
+      task_id:
+        type: string
+      task_template_id:
+        type: string
+    required:
+    - payload
+    type: object
+  response.Task:
+    properties:
+      deadline:
+        example: "2025-01-01T13:00:00Z"
+        type: string
+      id:
+        type: string
+      payload:
+        type: string
+    required:
+    - payload
+    type: object
+  response.TaskAssignments:
+    properties:
+      assignments:
+        items:
+          $ref: '#/definitions/response.Assignments'
+        type: array
+      task_template_id:
+        type: string
+    required:
+    - assignments
+    - task_template_id
+    type: object
+  response.TaskID:
+    properties:
+      id:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Tasks API
+  version: "1.0"
+paths:
+  /api/v1/task:
+    post:
+      consumes:
+      - application/json
+      description: Создает шаблон/задачу(без назначения на классы и уроки), но этот
+        шаблон может использоваться для создания назначения
+      parameters:
+      - description: Данные задачи
+        in: body
+        name: tasks
+        required: true
+        schema:
+          $ref: '#/definitions/request.Task'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.TaskID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Создание шаблона задачи(без назначения на классы и уроки)
+      tags:
+      - tasks
+  /api/v1/task/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Получить задачу
+      parameters:
+      - description: ID задачи
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Поучить задачу
+      tags:
+      - tasks
+  /api/v1/task/{id}/delete:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить шаблон задачи(удалятся все назначения, которые были созданы
+        по задаче)
+      parameters:
+      - description: ID задачи
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TaskID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Удалить шаблон задачи
+      tags:
+      - tasks
+  /api/v1/task/{id}/update:
+    put:
+      consumes:
+      - application/json
+      description: Обновить шаблон задачи
+      parameters:
+      - description: ID задачи
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Данные задачи
+        in: body
+        name: tasks
+        required: true
+        schema:
+          $ref: '#/definitions/request.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TaskID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Обновить шаблон задачи
+      tags:
+      - tasks
+  /api/v1/task/all:
+    get:
+      consumes:
+      - application/json
+      description: Получить все шаблоны задач
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Task'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Поучить все шаблоны задач
+      tags:
+      - tasks
+  /api/v1/task/assignment:
+    post:
+      consumes:
+      - application/json
+      description: Назначить задачу классу и уроку
+      parameters:
+      - description: Данные для назначения
+        in: body
+        name: task-assign
+        required: true
+        schema:
+          $ref: '#/definitions/request.TaskAsignments'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.TaskAssignments'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Назначить задачу классу и уроку
+      tags:
+      - tasks
+  /api/v1/task/assignment-delete:
+    delete:
+      consumes:
+      - application/json
+      description: Удалить задачу с класса и урока
+      parameters:
+      - description: id задачи для удаления
+        in: body
+        name: task-assign
+        required: true
+        schema:
+          $ref: '#/definitions/request.TaskAsignmentID'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Удалить задачу с класса и урока
+      tags:
+      - tasks
+  /api/v1/task/assignment-update:
+    put:
+      consumes:
+      - application/json
+      description: Обновить задачу для класса
+      parameters:
+      - description: Данные для назначения
+        in: body
+        name: task-assign
+        required: true
+        schema:
+          $ref: '#/definitions/request.TaskAsignment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Обновить задачу для класса
+      tags:
+      - tasks
+  /api/v1/task/create-with-assignment:
+    post:
+      consumes:
+      - application/json
+      description: Создать задачу для класса
+      parameters:
+      - description: Данные для создания задачи с назначением классу и уроку
+        in: body
+        name: task-assign
+        required: true
+        schema:
+          $ref: '#/definitions/request.TaskWithAsignment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.AssignmentID'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Создать задачу для класса
+      tags:
+      - tasks
+  /api/v1/task/get-by-class:
+    get:
+      consumes:
+      - application/json
+      description: Поучить задачи класса
+      parameters:
+      - description: название класса
+        in: query
+        name: class
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.ClassTasks'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Поучить задачи класса
+      tags:
+      - tasks
+  /api/v1/task/result:
+    post:
+      consumes:
+      - application/json
+      description: Поставить результаты за задачу ученикам
+      parameters:
+      - description: Оценки пользователей за задачу
+        in: body
+        name: task-results
+        required: true
+        schema:
+          $ref: '#/definitions/request.TaskResult'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/common.ErrorResponse'
+      summary: Поставить результаты за задачу ученикам
+      tags:
+      - tasks
+swagger: "2.0"
