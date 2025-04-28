@@ -157,13 +157,11 @@ const docTemplate = `{
                 "summary": "Удалить задачу с класса и урока",
                 "parameters": [
                     {
-                        "description": "id задачи для удаления",
-                        "name": "task-assign",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/request.TaskAsignmentID"
-                        }
+                        "type": "string",
+                        "description": "id назначения задачи классу",
+                        "name": "class_task_id",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -571,17 +569,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "payload": {
-                    "type": "string"
-                }
-            }
-        },
-        "request.TaskAsignmentID": {
-            "type": "object",
-            "required": [
-                "class_task_id"
-            ],
-            "properties": {
-                "class_task_id": {
                     "type": "string"
                 }
             }

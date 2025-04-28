@@ -121,7 +121,7 @@ func (h *Handler) GetTasks(c *gin.Context) {
 
 	task, err := h.taskService.GetTasks(ctx)
 	if err != nil {
-		h.logger.Error("failed to create task", slog.String("error", err.Error()))
+		h.logger.Error("failed to get task", slog.String("error", err.Error()))
 		if errors.Is(err, domain.ErrTaskNotFound) {
 			c.JSON(http.StatusBadRequest, common.NewErrorResponse(err.Error(), http.StatusBadRequest))
 			return
@@ -244,7 +244,7 @@ func (h *Handler) GetTaskByClass(c *gin.Context) {
 // @Description Удалить задачу с класса и урока
 // @tags tasks
 // @Accept json
-// @Param task-assign body request.TaskAsignmentID true "id задачи для удаления"
+// @Param class_task_id query string true "id назначения задачи классу"
 // @Produce json
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} common.ErrorResponse
@@ -252,10 +252,11 @@ func (h *Handler) GetTaskByClass(c *gin.Context) {
 // @Router /api/v1/task/assignment-delete [delete].
 func (h *Handler) DeleteAssignment(c *gin.Context) {
 	ctx := c.Request.Context()
+
 	var input request.TaskAsignmentID
 
-	if err := c.BindJSON(&input); err != nil {
-		h.logger.Error("failed to bind body", slog.String("error", err.Error()))
+	if err := c.BindQuery(&input); err != nil {
+		h.logger.Error("failed to bind query class_task_id", slog.String("error", err.Error()))
 		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err.Error(), http.StatusBadRequest))
 		return
 	}

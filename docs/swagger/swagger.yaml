@@ -41,13 +41,6 @@ definitions:
     - class_task_id
     - payload
     type: object
-  request.TaskAsignmentID:
-    properties:
-      class_task_id:
-        type: string
-    required:
-    - class_task_id
-    type: object
   request.TaskAsignments:
     properties:
       assign_to:
@@ -362,12 +355,11 @@ paths:
       - application/json
       description: Удалить задачу с класса и урока
       parameters:
-      - description: id задачи для удаления
-        in: body
-        name: task-assign
+      - description: id назначения задачи классу
+        in: query
+        name: class_task_id
         required: true
-        schema:
-          $ref: '#/definitions/request.TaskAsignmentID'
+        type: string
       produces:
       - application/json
       responses:
