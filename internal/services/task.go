@@ -2,12 +2,17 @@ package services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
 	"task/internal/domain"
+	"time"
+
+	"task/pkg/cache"
 
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 )
 
 type Producer interface {
@@ -17,13 +22,15 @@ type Producer interface {
 type TaskService struct {
 	logger   *slog.Logger
 	db       Database
+	cache    cache.Cache
 	producer Producer
 }
 
-func New(logger *slog.Logger, db Database, producer Producer) *TaskService {
+func New(logger *slog.Logger, db Database, cache cache.Cache, producer Producer) *TaskService {
 	return &TaskService{
 		logger:   logger,
 		db:       db,
+		cache:    cache,
 		producer: producer,
 	}
 }
@@ -35,10 +42,44 @@ func (u *TaskService) CreateTask(ctx context.Context, task *domain.Task) (uuid.U
 		return uuid.Nil, fmt.Errorf("failed create task: %w", err)
 	}
 
+	//store in the redis
+	rtask, err := json.Marshal(*task)
+	if err != nil {
+		u.logger.Error("serialize task", slog.String("message", err.Error()))
+	}
+
+	err = u.cache.Set(ctx, id, rtask, time.Hour)
+	if err != nil {
+		u.logger.Error("redis insertion error", slog.String("message", err.Error()))
+	}
+
 	return id, nil
 }
 
 func (u *TaskService) GetTask(ctx context.Context, id uuid.UUID) (*domain.Task, error) {
+
+	//use trategy cashe aside
+	//first check in redis
+	redisTask, err := u.cache.Get(ctx, id)
+	if err == nil {
+		redisTaskBytes, ok := redisTask.(string)
+		if !ok {
+			u.logger.Error("failed convert redis data to bytes")
+		}
+		var task domain.Task
+		err := json.Unmarshal([]byte(redisTaskBytes), &task)
+		if err != nil {
+			u.logger.Error("failed convert redis data to domain", slog.String("message", err.Error()))
+		}
+		if err == nil {
+			u.logger.Info("success", slog.String("message", redisTaskBytes))
+			return &task, nil
+		}
+	} else {
+		if !errors.Is(err, redis.Nil) {
+			u.logger.Error("redis error", slog.String("message", err.Error()))
+		}
+	}
 
 	task, err := u.db.GetTaskByID(ctx, id)
 	if err != nil {
@@ -46,6 +87,19 @@ func (u *TaskService) GetTask(ctx context.Context, id uuid.UUID) (*domain.Task, 
 			return nil, fmt.Errorf("task doesn't exist: %w", err)
 		}
 		return nil, fmt.Errorf("failed get task: %w", err)
+	}
+
+	//store in the redis
+	rtask, err := json.Marshal(task)
+	if err != nil {
+		u.logger.Error("serialize task", slog.String("message", err.Error()))
+	}
+
+	if err == nil {
+		err = u.cache.Set(ctx, id, rtask, time.Hour)
+		if err != nil {
+			u.logger.Error("redis insertion error", slog.String("message", err.Error()))
+		}
 	}
 
 	return task, nil
@@ -67,6 +121,16 @@ func (u *TaskService) UpdateTask(ctx context.Context, task *domain.Task) (uuid.U
 		return uuid.Nil, fmt.Errorf("failed update task: %w", err)
 	}
 
+	rtask, err := json.Marshal(*task)
+	if err != nil {
+		u.logger.Error("serialize task", slog.String("message", err.Error()))
+	}
+
+	err = u.cache.Set(ctx, task.ID, rtask, time.Hour)
+	if err != nil {
+		u.logger.Error("redis insertion error", slog.String("message", err.Error()))
+	}
+
 	return task.ID, nil
 }
 
@@ -75,6 +139,11 @@ func (u *TaskService) DeleteTask(ctx context.Context, id uuid.UUID) error {
 	err := u.db.DeleteTask(ctx, id)
 	if err != nil {
 		return fmt.Errorf("failed delete task: %w", err)
+	}
+
+	err = u.cache.Del(ctx, id)
+	if err != nil {
+		u.logger.Error("delete from redis", slog.String("message", err.Error()))
 	}
 
 	return nil

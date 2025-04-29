@@ -169,7 +169,7 @@ type Class struct {
 }
 
 type TaskAsignmentID struct {
-	AssignmentID string `json:"class_task_id" binding:"required"`
+	AssignmentID string `form:"class_task_id" binding:"required"`
 }
 
 func (t TaskAsignmentID) ToUUID() (uuid.UUID, error) {

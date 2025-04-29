@@ -7,9 +7,9 @@ import (
 )
 
 type Task struct {
-	ID       uuid.UUID
-	Payload  string
-	Deadline *time.Time
+	ID       uuid.UUID  `json:"id"`
+	Payload  string     `json:"payload"`
+	Deadline *time.Time `json:"deadline,omitempty"`
 }
 
 type TaskWithAsignment struct {
@@ -28,6 +28,9 @@ type ClassLesson struct {
 type TaskAsignments struct {
 	ToAssign []ClassLesson
 	TaskID   uuid.UUID
+}
+
+type RTaskAsignments struct {
 }
 
 type Assignment struct {
