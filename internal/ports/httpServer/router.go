@@ -3,11 +3,13 @@ package httpserver
 import (
 	"log/slog"
 
+	"github.com/go-redis/redis_rate/v9"
 	swaggoFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	// Register swagger docs.
 	_ "task/docs/swagger"
+	ratelimiter "task/pkg/rate-limiter"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,16 +17,19 @@ import (
 // New 		godoc
 // @title 	Tasks API
 // @version 1.0
-func New(handler *Handler, logger *slog.Logger) *gin.Engine {
+func New(handler *Handler, logger *slog.Logger, rL *redis_rate.Limiter) *gin.Engine {
 	router := gin.New()
 	registerSwagger(router)
-	registerGroup(router, handler, logger)
+	registerGroup(router, handler, logger, rL)
 
 	return router
 }
 
-func registerGroup(e *gin.Engine, handler *Handler, logger *slog.Logger) {
+func registerGroup(e *gin.Engine, handler *Handler, logger *slog.Logger, rL *redis_rate.Limiter) {
 	r := e.Group("api/v1")
+
+	ratelimiter.Limiter = rL
+	r.Use(ratelimiter.RateLimit(logger))
 
 	r.POST("/task", handler.CreateTask)
 	r.POST("task/create-with-assignment", handler.CreateTaskWithAssignment)

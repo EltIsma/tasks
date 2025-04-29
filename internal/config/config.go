@@ -13,6 +13,7 @@ import (
 type Config struct {
 	Env      string `env:"ENV" env-default:"local"`
 	Postgres PostgresConfig
+	Redis    RedisConfig
 	Server   ServerConfig
 	Kafka    KafkaConfig
 }
@@ -26,6 +27,11 @@ type ServerConfig struct {
 
 type PostgresConfig struct {
 	PostgresURL string `env:"POSTGRES_URL" env-required:"true"`
+}
+
+type RedisConfig struct {
+	Hosts    []string `env:"REDIS_HOSTS" yaml:"hosts" env-required:"true"`
+	Password string   `env:"REDIS_PASSWORD" env-required:"true"`
 }
 
 type KafkaConfig struct {

@@ -8,8 +8,13 @@ services:
     volumes:
       - ./config:/etc/task
     depends_on:
-      - postgres
-      - kafka
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+        
 
   postgres:
     restart: always
@@ -25,6 +30,22 @@ services:
       - POSTGRESQL_DATABASE=postgres
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    restart: always
+    container_name: redis
+    image: docker.io/bitnami/redis:7.2
+    ports:
+      - "6379:6379"
+    volumes:
+      - .data/redis:/bitnami/redis/data
+    environment:
+      - REDIS_PASSWORD=redis
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
       interval: 2s
       timeout: 5s
       retries: 5
@@ -68,6 +89,12 @@ services:
     volumes:
       - .data/kafka:/bitnami/kafka/data
       - .config/kafka:/bitnami/kafka/config
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics.sh --bootstrap-server kafka:9092 --topic events.task --describe"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
   kafka-ui:
     container_name: kafka-ui

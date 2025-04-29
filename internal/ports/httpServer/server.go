@@ -2,11 +2,13 @@ package httpserver
 
 import (
 	"context"
-	"task/internal/config"
 	"fmt"
 	"log/slog"
 	"net/http"
+	"task/internal/config"
 	"time"
+
+	"github.com/go-redis/redis_rate/v9"
 )
 
 type Server struct {
@@ -15,11 +17,11 @@ type Server struct {
 	shutDownTimeout time.Duration
 }
 
-func NewHTTPServer(config *config.ServerConfig, logger *slog.Logger, taskService TaskService) (*Server, error) {
+func NewHTTPServer(config *config.ServerConfig, logger *slog.Logger, taskService TaskService, limiter *redis_rate.Limiter) (*Server, error) {
 	httpHandler := NewHandler(logger, taskService)
 	server := &http.Server{
 		Addr:         ":" + config.Port,
-		Handler:      New(httpHandler, logger),
+		Handler:      New(httpHandler, logger, limiter),
 		ReadTimeout:  config.ReadTimeout,
 		WriteTimeout: config.WriteTimeout,
 	}
